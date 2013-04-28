@@ -1,8 +1,8 @@
-;;; anything-myrurema.el --- Anything Interface for myrurema
+;;; helm-myrurema.el --- Helm Interface for myrurema
 
-;; Copyright (C) 2012 mori-dev
+;; Copyright (C) 2012 mori-dev, nabeo
 
-;; Author: mori-dev <mori.dev.asdf@gmail.com>
+;; Author: mori-dev <mori.dev.asdf@gmail.com>, nabeo <watanabe.michikazu@gmail.com>
 ;; Keywords: ruby
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -21,43 +21,43 @@
 ;;; Installation:
 
 ;; install requires libraries:
-;; `myrurema'                  https://rubygems.org/gems/myrurema
-;; `anything.el'               http://www.emacswiki.org/emacs/anything.el
-;; `anything-config.el'        http://www.emacswiki.org/emacs/anything-config.el
-;; `anything-match-plugin.el'  http://www.emacswiki.org/emacs/anything-match-plugin.el
+;; `myrurema'              https://rubygems.org/gems/myrurema
+;; `helm.el'               https://github.com/emacs-helm/helm
+;; `helm-config.el'        https://github.com/emacs-helm/helm
+;; `helm-match-plugin.el'  https://github.com/emacs-helm/helm
 
-;; `anything-myrurema.el'      http://github.com/mori-dev/anything-myrurema (this file)
+;; `helm-myrurema.el'      https://github.com/nabeo/anything-myrurema (this file)
 
 ;;; Usage
 ;;
-;; (require 'anything-myrurema)
+;; (require 'helm-myrurema)
 ;;
-;; M-x anything-myrurema
+;; M-x helm-myrurema
 
 ;;; Code:
 
 (require 'cl)
-(require 'anything)
-(require 'anything-config)
+(require 'helm)
+(require 'helm-config)
 
-(defvar anything-myrurema-index-path "~/.emacs.d/myrurema.index")
+(defvar helm-myrurema-index-path "~/.emacs.d/myrurema.index")
 
-(defvar anything-c-source-myrurema
+(defvar helm-c-source-myrurema
       `((name . "myrurema")
-        (candidates-file . ,anything-myrurema-index-path)
+        (candidates-file . ,helm-myrurema-index-path)
         (candidate-number-limit . 100000)
-        (action . (("emacs でるりまを見る" . (lambda (c) (anything-myrurema-show-rurema c)))
-                   ("ブラウザでるりまサーチ" . (lambda (c) (anything-myrurema-rurema-search c)))))))
+        (action . (("emacs でるりまを見る" . (lambda (c) (helm-myrurema-show-rurema c)))
+                   ("ブラウザでるりまサーチ" . (lambda (c) (helm-myrurema-rurema-search c)))))))
 
-(defun anything-myrurema-get-docstring (s)
+(defun helm-myrurema-get-docstring (s)
   (cond
    ((executable-find "rurema")
     (shell-command-to-string (format "rurema --no-ask %s" (shell-quote-argument s))))
    (t
     "can't find \"rurema\" command")))
 
-(defun anything-myrurema-show-rurema (candidate)
-    (let ((docstring (anything-myrurema-get-docstring candidate))
+(defun helm-myrurema-show-rurema (candidate)
+    (let ((docstring (helm-myrurema-get-docstring candidate))
            (buf (get-buffer-create "*rurema-result*")))
       (with-current-buffer buf
         (erase-buffer)
@@ -67,12 +67,12 @@
         (delete-blank-lines))
       (switch-to-buffer buf)))
 
-(defun anything-myrurema-rurema-search (candidate)
+(defun helm-myrurema-rurema-search (candidate)
     (browse-url (format "http://rurema.clear-code.com/query:%s/" (url-hexify-string candidate))))
 
-(defun anything-myrurema ()
+(defun helm-myrurema ()
   "anything myrurema"
   (interactive)
-  (anything-other-buffer 'anything-c-source-myrurema "*anything myrurema*"))
+  (helm-other-buffer 'helm-c-source-myrurema "*helm myrurema*"))
 
-(provide 'anything-myrurema)
+(provide 'helm-myrurema)
